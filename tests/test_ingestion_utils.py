@@ -19,11 +19,11 @@ data_v2.add(Package2(pkg='pkg', ver='ver'))
 def test_ingest_epv(_session):
     """Test unknown_package_flow positive."""
     res = unknown_package_flow('dummy_eco', data_v1)
-    assert res == True
+    assert res is True
 
 
 @mock.patch('requests_futures.sessions.FuturesSession.post')
 def test_ingest_epv_failed(_session):
     """Test unknown_package_flow negative."""
     res = unknown_package_flow('dummy_eco', data_v2)
-    assert res == False
+    assert res is False
