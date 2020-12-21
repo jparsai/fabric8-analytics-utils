@@ -2,7 +2,6 @@
 
 import logging
 import os
-import time
 from collections import namedtuple
 from typing import Set
 from requests_futures.sessions import FuturesSession
@@ -23,19 +22,18 @@ def unknown_package_flow(ecosystem: str, unknown_pkgs: Set[namedtuple]):
     :param ecosystem: Ecosystem
     :param unknown_pkgs: Set of tuple having packages name and version
     """
+    logger.debug('Triggered Unknown Package Flow for ecosystem: {} and Package: {}'
+                 .format(ecosystem, unknown_pkgs))
+
+    # Create payload to be passed to ingestion API
+    payload = {
+        "ecosystem": ecosystem,
+        "packages": [],
+        "force": False,
+        "force_graph_sync": True
+    }
+
     try:
-        started_at = time.time()
-        logger.debug('Triggered Unknown Package Flow for ecosystem: {} and Package: {}'
-                     .format(ecosystem, unknown_pkgs))
-
-        # Create payload to be passed to ingestion API
-        payload = {
-            "ecosystem": ecosystem,
-            "packages": [],
-            "force": False,
-            "force_graph_sync": True
-        }
-
         # Set the unknown packages and versions
         for pkg in unknown_pkgs:
             payload['packages'].append({'package': pkg.name, 'version': pkg.version})
@@ -46,11 +44,7 @@ def unknown_package_flow(ecosystem: str, unknown_pkgs: Set[namedtuple]):
             _session.post(url=_INGESTION_API_URL,
                           json=payload,
                           headers={'auth_token': _APP_SECRET_KEY})
-
-        elapsed_time = time.time() - started_at
-        logger.info('Unknown flow for %f packages took %f seconds', len(unknown_pkgs), elapsed_time)
-        return True
     except Exception as e:
         logger.info('Failed to trigger unknown flow for payload {} with error {}'
                     .format(payload, e))
-        return False
+        raise e

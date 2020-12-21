@@ -1,6 +1,7 @@
 """Tests for classes from ingestion_utils module."""
 
 from f8a_utils.ingestion_utils import unknown_package_flow
+import unittest
 from unittest import mock
 from collections import namedtuple
 
@@ -15,15 +16,16 @@ Package2 = namedtuple("Package", ["pkg", "ver"])
 data_v2.add(Package2(pkg='pkg', ver='ver'))
 
 
-@mock.patch('requests_futures.sessions.FuturesSession.post')
-def test_ingest_epv(_session):
-    """Test unknown_package_flow positive."""
-    res = unknown_package_flow('dummy_eco', data_v1)
-    assert res is True
+class MyTestCase(unittest.TestCase):
+    """Test class for unknown_package_flow."""
 
+    @mock.patch('requests_futures.sessions.FuturesSession.post')
+    def test_ingest_epv(self, _session):
+        """Test unknown_package_flow positive."""
+        unknown_package_flow('dummy_eco', data_v1)
 
-@mock.patch('requests_futures.sessions.FuturesSession.post')
-def test_ingest_epv_failed(_session):
-    """Test unknown_package_flow negative."""
-    res = unknown_package_flow('dummy_eco', data_v2)
-    assert res is False
+    @mock.patch('requests_futures.sessions.FuturesSession.post')
+    def test_ingest_epv_failed(self, _session):
+        """Test unknown_package_flow negative."""
+        with self.assertRaises(Exception):
+            unknown_package_flow('dummy_eco', data_v2)
