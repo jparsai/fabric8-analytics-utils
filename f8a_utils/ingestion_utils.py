@@ -51,6 +51,6 @@ def unknown_package_flow(ecosystem: str, unknown_pkgs: Set[namedtuple]):
         logger.info('Unknown flow for %f packages took %f seconds', len(unknown_pkgs), elapsed_time)
         return True
     except Exception as e:
-        logger.info('Failed to trigger unknown flow for payload {}'.format(payload))
-        logger.error(e)
+        logger.info('Failed to trigger unknown flow for payload {} with error {}'
+                    .format(payload, e))
         return False
