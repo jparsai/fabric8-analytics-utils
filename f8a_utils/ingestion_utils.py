@@ -33,18 +33,19 @@ def unknown_package_flow(ecosystem: str, unknown_pkgs: Set[namedtuple]):
         "force_graph_sync": True
     }
 
-    try:
-        # Set the unknown packages and versions
-        for pkg in unknown_pkgs:
-            payload['packages'].append({'package': pkg.name, 'version': pkg.version})
+    # Set the unknown packages and versions
+    for pkg in unknown_pkgs:
+        payload['packages'].append({'package': pkg.name, 'version': pkg.version})
 
-        # If package list is not empty then call ingestion API
-        if payload['packages']:
-            logger.info('Invoking Ingestion URL for payload = {}'.format(payload))
+    # If package list is not empty then call ingestion API
+    if payload['packages']:
+        try:
             _session.post(url=_INGESTION_API_URL,
                           json=payload,
                           headers={'auth_token': _APP_SECRET_KEY})
-    except Exception as e:
-        logger.info('Failed to trigger unknown flow for payload {} with error {}'
-                    .format(payload, e))
-        raise e
+        except Exception as e:
+            logger.error('Failed to trigger unknown flow for payload %s with error %s',
+                         payload, e)
+            raise Exception('Ingestion failed') from e
+        else:
+            logger.info('Ingestion call being executed')
