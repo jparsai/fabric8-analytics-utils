@@ -41,6 +41,12 @@ def unknown_package_flow(ecosystem: str, unknown_pkgs: Set[namedtuple]):
             payload['packages'].append({'package': pkg.name, 'version': pkg.version})
         else:
             logger.info('name is not present')
+            logger.info('----------------------')
+            logger.info('name' in pkg)
+            logger.info('++++++++++++++++++++++')
+            logger.info('package' in pkg)
+            logger.info('**********************')
+
 
     # If package list is not empty then call ingestion API
     if payload['packages']:
