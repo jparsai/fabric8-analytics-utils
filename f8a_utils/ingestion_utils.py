@@ -34,19 +34,14 @@ def unknown_package_flow(ecosystem: str, unknown_pkgs: Set[namedtuple]):
     }
 
     # Set the unknown packages and versions
-    logger.info('===========================================')
+    logger.info('1---------------------------------------')
     for pkg in unknown_pkgs:
         if hasattr(pkg, 'name'):
             logger.info('name is present')
             payload['packages'].append({'package': pkg.name, 'version': pkg.version})
         else:
-            logger.info('name is not present')
-            logger.info('----------------------')
-            logger.info('name' in pkg)
-            logger.info('++++++++++++++++++++++')
-            logger.info('package' in pkg)
-            logger.info('**********************')
-
+            logger.info('package is present')
+            payload['packages'].append({'package': pkg.package, 'version': pkg.version})
 
     # If package list is not empty then call ingestion API
     if payload['packages']:
