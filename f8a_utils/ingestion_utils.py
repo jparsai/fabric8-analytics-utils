@@ -35,6 +35,7 @@ def unknown_package_flow(ecosystem: str, unknown_pkgs: Set[namedtuple]):
 
     # Set the unknown packages and versions
     for pkg in unknown_pkgs:
+        logger.info('type(pkg) : {}'.format(type(pkg)))
         payload['packages'].append({'package': pkg.name, 'version': pkg.version})
 
     # If package list is not empty then call ingestion API
