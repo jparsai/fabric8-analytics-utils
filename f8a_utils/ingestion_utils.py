@@ -34,8 +34,8 @@ def unknown_package_flow(ecosystem: str, unknown_pkgs: Set[namedtuple]):
     }
 
     # Set the unknown packages and versions
+    logger.info('===========================================')
     for pkg in unknown_pkgs:
-        logger.info('type(pkg) : {}'.format(type(pkg.name)))
         if hasattr(pkg, 'name'):
             logger.info('name is present')
             payload['packages'].append({'package': pkg.name, 'version': pkg.version})
