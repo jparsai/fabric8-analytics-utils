@@ -36,10 +36,7 @@ def unknown_package_flow(ecosystem: str, unknown_pkgs: Set[namedtuple]):
     # Set the unknown packages and versions
     for pkg in unknown_pkgs:
         # As API server and Backbone have different keys used.
-        if hasattr(pkg, 'name'):
-            payload['packages'].append({'package': pkg.name, 'version': pkg.version})
-        else:
-            payload['packages'].append({'package': pkg.package, 'version': pkg.version})
+        payload['packages'].append({'package': pkg.package, 'version': pkg.version})
 
     # If package list is not empty then call ingestion API
     if payload['packages']:
