@@ -1,7 +1,7 @@
 """Tests for classes from ingestion_utils module."""
 
 from f8a_utils.ingestion_utils import unknown_package_flow, \
-    PACKAGE as Package
+    Package
 import unittest
 from unittest import mock
 

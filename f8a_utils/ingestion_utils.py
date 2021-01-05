@@ -14,7 +14,7 @@ _INGESTION_API_URL = "http://{host}:{port}/{endpoint}".format(
     port=os.environ.get("INGESTION_SERVICE_PORT", "34000"),
     endpoint='ingestions/epv')
 _session = FuturesSession()
-PACKAGE = namedtuple("Package", ["package", "version"])
+Package = namedtuple("Package", ["package", "version"])
 
 
 def unknown_package_flow(ecosystem: str, unknown_pkgs: Set[namedtuple]):
