@@ -8,11 +8,10 @@ from requests_futures.sessions import FuturesSession
 
 logger = logging.getLogger(__name__)
 
-_APP_SECRET_KEY = os.getenv('APP_SECRET_KEY', 'not-set')
 _INGESTION_API_URL = "http://{host}:{port}/{endpoint}".format(
     host=os.environ.get("INGESTION_SERVICE_HOST", "bayesian-jobs"),
     port=os.environ.get("INGESTION_SERVICE_PORT", "34000"),
-    endpoint='ingestions/epv')
+    endpoint='internal/ingestions/epv')
 _session = FuturesSession()
 Package = namedtuple("Package", ["package", "version"])
 
@@ -42,9 +41,7 @@ def unknown_package_flow(ecosystem: str, unknown_pkgs: Set[namedtuple]):
     # If package list is not empty then call ingestion API
     if payload['packages']:
         try:
-            _session.post(url=_INGESTION_API_URL,
-                          json=payload,
-                          headers={'auth_token': _APP_SECRET_KEY})
+            _session.post(url=_INGESTION_API_URL, json=payload)
         except Exception as e:
             logger.error('Failed to trigger unknown flow for payload %s with error %s',
                          payload, e)
