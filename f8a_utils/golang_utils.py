@@ -43,7 +43,8 @@ class GolangUtils:
     def __fetch_all_versions(self, obj):
         """Fetch all the versions of a pkg."""
         page_exist = obj.get_sub_data('div', {'data-test-id': 'UnitHeader-breadcrumb'})
-        ver_list = obj.get_value_from_list('li', 'a', {'class': 'Versions-item'})
+        ver_obj = obj.get_sub_data('div', {'class': 'Versions'})
+        ver_list = obj.get_value_from_list('a', None, None, None, None, ver_obj)
         final_list = []
         if len(ver_list) != 0:
             for ver in ver_list:
@@ -64,12 +65,18 @@ class GolangUtils:
                     final_list.append(version)
         # The tab exist logic is added because in some cases, you wont find any versions under tab.
         if ver_list or page_exist:
-            org_name = self.get_gh_link().split("https://github.com/")[1].split("/")
-            all_ver = self.gh._get_verion_list(org_name[0], org_name[1])
-            if all_ver:
-                if final_list:
-                    all_ver.extend(final_list)
-                return list(set(all_ver))
+            link = self.get_gh_link()
+            if link and "https://github.com/" in link:
+                org_name = self.get_gh_link().split("https://github.com/")[1].split("/")
+                all_ver = self.gh._get_verion_list(org_name[0], org_name[1])
+                if all_ver:
+                    if final_list:
+                        all_ver.extend(final_list)
+                    return list(set(all_ver))
+                elif len(final_list) == 0:
+                    return ['none']
+            else:
+                return []
         return ver_list
 
     def __select_latest_version(self, versions=[]):
@@ -82,10 +89,10 @@ class GolangUtils:
         version_arr.sort()
         return str(version_arr[-1])
 
-    def __fetch_latest_version(self, obj):
+    def __fetch_latest_version(self):
         """Fetch the latest version of a pkg."""
         all_ver = self.get_all_versions()
-        if all_ver:
+        if all_ver and len(all_ver) != 0 and all_ver[0] != "none":
             return self.__select_latest_version(all_ver)
         else:
             return ""
@@ -148,13 +155,13 @@ class GolangUtils:
             self.url = mod_url
             self.version_list = self.__fetch_all_versions(scraper)
             if len(self.version_list) != 0:
-                self.latest_version = self.__fetch_latest_version(scraper)
+                self.latest_version = self.__fetch_latest_version()
                 self.module = self.__fetch_module(scraper, pkg)
             else:
                 self.mode = "Not Found"
         else:
             _logger.info("Fetching the details from pkg.")
-            self.latest_version = self.__fetch_latest_version(scraper)
+            self.latest_version = self.__fetch_latest_version()
             self.module = self.__fetch_module(scraper)
 
     def get_module(self):
